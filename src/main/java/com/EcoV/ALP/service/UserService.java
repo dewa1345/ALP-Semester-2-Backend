@@ -1,13 +1,15 @@
 package com.EcoV.ALP.service;
 
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.stereotype.Service;
+
 import com.EcoV.ALP.dto.AuthRequest;
 import com.EcoV.ALP.dto.AuthResponse;
 import com.EcoV.ALP.dto.RegisterRequest;
 import com.EcoV.ALP.entity.User;
 import com.EcoV.ALP.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -49,4 +51,5 @@ public class UserService {
 
         return new AuthResponse(true, "Login successful");
     }
+    public UserRepository getUserRepository() {return this.userRepository;}
 }
