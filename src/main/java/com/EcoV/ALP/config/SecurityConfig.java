@@ -16,13 +16,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .cors(Customizer.withDefaults()) // ✅ enable CORS using CorsConfig
-            .csrf(csrf -> csrf.disable()) // ✅ disable CSRF for testing/API use
+            .cors(Customizer.withDefaults()) // allow cross-origin
+            .csrf(csrf -> csrf.disable()) // disable CSRF for APIs
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/auth/**").permitAll() // ✅ allow auth endpoints
-                .anyRequest().authenticated() // ✅ require auth for everything else
+                .requestMatchers("/api/v1/auth/**").permitAll()         // allow login/register
+                .requestMatchers("/api/v1/profile/**").permitAll()      // ✅ allow token-based profile access
+                .anyRequest().authenticated()
             )
-            .httpBasic(Customizer.withDefaults()) // or .formLogin() if using login form
+            .httpBasic(Customizer.withDefaults()) // basic auth if needed
             .build();
     }
 

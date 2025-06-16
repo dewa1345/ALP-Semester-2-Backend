@@ -4,9 +4,7 @@ import java.security.Key;
 import java.util.Date;
 
 import org.springframework.stereotype.Component;
-
 import com.EcoV.ALP.entity.User;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -40,6 +38,7 @@ public class JwtUtil {
                 .parseClaimsJws(token);
             return true;
         } catch (JwtException e) {
+            System.out.println("❌ Token validation failed: " + e.getMessage());
             return false;
         }
     }
@@ -52,12 +51,34 @@ public class JwtUtil {
                 .getBody();
         return claims.getSubject();
     }
+
     public Long extractUserId(String token) {
-    Claims claims = Jwts.parserBuilder()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
-    return claims.get("id", Long.class);
+    try {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        Object rawId = claims.get("id");
+
+        System.out.println("✅ Extracted raw ID: " + rawId + " (" + rawId.getClass().getName() + ")");
+
+        if (rawId instanceof Integer) {
+            return ((Integer) rawId).longValue();
+        } else if (rawId instanceof Long) {
+            return (Long) rawId;
+        } else {
+            System.out.println("⚠️ Unexpected ID type");
+            return null;
+        }
+
+    } catch (Exception e) {
+        System.out.println("❌ Error decoding JWT:");
+        e.printStackTrace(); // 🔥 this is the most important log now
+        return null;
     }
+}
+
+
 }
